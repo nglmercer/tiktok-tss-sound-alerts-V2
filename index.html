@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TikTok LIVE</title>
+    <meta name="description" content="A chat reader for TikTok LIVE utilizing TikTok-Live-Connector and Socket.IO to forward the data to the client. This demo project uses the unofficial TikTok API to retrieve chat comments, gifts and other events from TikTok LIVE.">
+    <meta name="keywords" content="TikTok,Live,Livestream,Chat,Reader,Scraper,Tracker,tiktok.com,broadcast,api,library,node,node.js,javascript">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, maximum-scale=10.0">
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="inputFields">
+        <input type="text" placeholder="@tuusuario" id="uniqueIdInput" value="@melserngl">
+        <input type="button" id="connectButton" value="Conectar">
+    </div>
+
+    <script>
+        const uniqueIdInput = document.getElementById('uniqueIdInput');
+        const connectButton = document.getElementById('connectButton');
+    
+        // Load the last entered value from localStorage
+        const lastValue = localStorage.getItem('lastValue');
+        if (lastValue) {
+            uniqueIdInput.value = lastValue;
+        }
+    
+        if (connectButton) {
+            connectButton.addEventListener('click', () => {
+                const currentValue = uniqueIdInput.value;
+                if (currentValue) {
+                    // Store the current value in localStorage
+                    localStorage.setItem('lastValue', currentValue);
+                }
+            });
+        }
+    </script>
+
+    <div class="inputFields">
+        <input id="channel" type="text" placeholder="Twitch channel"></input> <input id="channel-button" value="GO" type="button"></input>
+</body>
+
+<div class="themeButtons">
+    <button onclick="changeTheme('theme-light')">Tema Claro</button>
+    <button onclick="changeTheme('theme-dark')">Tema Oscuro</button>
+</div>
+
+<div class="splitchattable">
+    <div class="chatcontainer">
+        <h3 class="containerheader">Chats</h3>
+    </div>
+    <div id="chatbox"></div>
+    <div class="giftcontainer">
+        <h3 class="containerheader">Gifts</h3>
+    </div>
+</div>
+
+<table class="splitstatetable">
+    <tr>
+        <td>
+            <div id="stateText"></div>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <div id="roomStats"></div>
+        </td>
+    </tr>
+</table>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.4.1/socket.io.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="connection.js"></script>
+<script src="app.js"></script>
+<script src="tmi.min.js"></script>
+<script src="TTSmain.js"></script>
+<script>
+    function changeTheme(theme) {
+        document.body.className = theme;
+    }
+</script>
+<div>
+    <div>
+        <audio id="audio" controls autoplay></audio>
+        <input id="skip-button" type="button" value="SKIP"></input> <br/>
+        <div id="voiceSelectContainer"></div>
+    </div>
+    <div id="voiceSelectContainer"></div>
+</div>
+<audio id="soundPlayer" src="" type="audio/mp3"></audio>
+</body>
+<form id="soundForm">
+    <input type="file" id="soundFiles" multiple>
+    <button type="submit">Añadir sonido</button>
+</form>
+<input type="file" id="importButton">
+<button onclick="importSettings()">ImportarCONFIG</button>
+<button id="exportButton" onclick="exportSettings()">ExportarCONFIG</button>
+<span id="loadingIndicator" style="display: none;">Loading...</span>
+
+<ul id="soundList"></ul>
+<div>
+    <label for="filter-words">Palabras para filtrar (separadas por espacio):</label>
+    <input type="text" id="filter-words">
+</div>
+</body>
+</html>

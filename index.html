@@ -106,6 +106,23 @@
 <div>
     <label for="filter-words">Palabras para filtrar (separadas por espacio):</label>
     <input type="text" id="filter-words">
-</div>
+  </div>
+  <script>
+    const filterWordsInput = document.getElementById('filter-words');
+
+    // Load the last entered value from localStorage
+    const lastFilterWords = localStorage.getItem('lastFilterWords');
+    if (lastFilterWords) {
+        filterWordsInput.value = lastFilterWords;
+    }
+
+    filterWordsInput.addEventListener('change', () => {
+        const currentFilterWords = filterWordsInput.value;
+        if (currentFilterWords) {
+            // Store the current value in localStorage
+            localStorage.setItem('lastFilterWords', currentFilterWords);
+        }
+    });
+</script>
 </body>
 </html>

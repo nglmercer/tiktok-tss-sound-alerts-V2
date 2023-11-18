@@ -10,6 +10,7 @@ body {
     font-family: Arial, Helvetica, sans-serif;
     font-weight: bold;
     font-size: 2em;
+    min-width: 300px;
 }
 /* Estilo para los recuadros */
 
@@ -47,11 +48,10 @@ input[type="button"] {
     text-decoration: none;
     /* quitar el subrayado */
     display: inline-block;
-    margin-bottom: 10px;
     cursor: pointer;
     /* cambiar el cursor a un puntero cuando se pasa por encima */
     border-radius: 4px;
-    padding: 15px 32px;
+    padding: 15px 10px;
     /* bordes redondeados */
 }
 
@@ -169,6 +169,12 @@ a {
     .splitchattable {
         flex-direction: column;
     }
+    audio {
+        width: 250px;
+        height: 65px;
+        outline: none;
+        vertical-align: middle; /* Alineación vertical en el centro */
+    }    
     .chatcontainer,
     .giftcontainer {
         min-width: 50px;
@@ -296,7 +302,6 @@ body.overlay {
     color: rgb(36, 23, 23);
 }
 audio {
-    width: 300px;
     height: 65px;
     outline: none;
     vertical-align: middle; /* Alineación vertical en el centro */

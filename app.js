@@ -107,7 +107,6 @@ function addChatItem(color, data, text, summarize) {
         scrollTop: container[0].scrollHeight
     }, 400);
     let filterWords = document.getElementById('filter-words').value.split(' ');
-
     // Convertir el texto a minúsculas para la comparación
     let lowerCaseText = text.toLowerCase();
     // Verificar si el texto contiene alguna de las palabras para filtrar
@@ -693,7 +692,7 @@ var VOICE_LIST = {
     "An (Vietnamese)": "An",
 };
 const VOICE_LIST_ALT = Object.keys(VOICE_LIST).map(k => VOICE_LIST[k]);
-const palabrasSpam = ['join', 'joined'];
+const palabrasSpam = ['@'];
 var voiceSelect = document.createElement('select');
 Object.keys(VOICE_LIST).forEach(function(key) {
     var option = document.createElement('option');

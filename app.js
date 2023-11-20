@@ -11,7 +11,28 @@ let previousLikeCount = 0;
 
 // These settings are defined by obs.html
 if (!window.settings) window.settings = {};
+document.addEventListener('DOMContentLoaded', (event) => {
+    const toggleButton = document.getElementById('dn');
 
+    // Cargar el tema actual desde localStorage
+    const currentTheme = localStorage.getItem('theme');
+    if (currentTheme) {
+        document.body.className = currentTheme;
+        toggleButton.checked = currentTheme === 'theme-dark';
+    }
+
+    toggleButton.addEventListener('change', () => {
+        if (toggleButton.checked) {
+            // Si el botón de alternancia está marcado, aplicar el tema oscuro
+            document.body.className = 'theme-dark';
+            localStorage.setItem('theme', 'theme-dark');
+        } else {
+            // Si el botón de alternancia no está marcado, aplicar el tema claro
+            document.body.className = 'theme-light';
+            localStorage.setItem('theme', 'theme-light');
+        }
+    });
+});
 $(document).ready(() => {
     $('#connectButton').click(connect);
     $('#uniqueIdInput').on('keyup', function(e) {
@@ -212,7 +233,11 @@ document.addEventListener('DOMContentLoaded', function() {
         addSoundToList(giftName, soundList);
     }
 });
-
+document.addEventListener('DOMContentLoaded', function() {
+    document.getElementById('toggleButton').addEventListener('click', function() {
+        document.getElementById('soundList').classList.toggle('hidden');
+    });
+});
 function addSoundToList(giftName, soundList) {
     let listItem = document.createElement('li');
     listItem.textContent = giftName;
@@ -341,6 +366,13 @@ function importSettings() {
         document.getElementById('loadingIndicator').style.display = 'none';
     }
 }
+connection.on('roomUser', (msg) => {
+    if (typeof msg.viewerCount === 'number') {
+        viewerCount = msg.viewerCount;
+        updateRoomStats();
+    }
+})
+
 // like stats
 connection.on('like', (msg) => {
     if (typeof msg.totalLikeCount === 'number') {

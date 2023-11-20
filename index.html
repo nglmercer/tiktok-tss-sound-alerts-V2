@@ -12,11 +12,26 @@
 
     <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
     <div class="inputFields">
         <input type="text" placeholder="@tuusuario" id="uniqueIdInput" value="@melserngl">
         <input type="button" id="connectButton" value="Conectar">
+        <div class="toggleWrapper">
+            <input type="checkbox" class="dn" id="dn">
+            <label for="dn" class="toggle">
+                <span class="toggle__handler">
+                    <span class="crater crater--1"></span>
+                    <span class="crater crater--2"></span>
+                    <span class="crater crater--3"></span>
+                </span>
+                <span class="star star--1"></span>
+                <span class="star star--2"></span>
+                <span class="star star--3"></span>
+                <span class="star star--4"></span>
+                <span class="star star--5"></span>
+                <span class="star star--6"></span>
+            </label>
+        </div>
     </div>
 
     <script>
@@ -43,11 +58,6 @@
     <div class="inputFields">
         <input id="channel" type="text" placeholder="Twitch channel"></input> <input id="channel-button" value="GO" type="button"></input>
 </body>
-
-<div class="themeButtons">
-    <button onclick="changeTheme('theme-light')">Tema Claro</button>
-    <button onclick="changeTheme('theme-dark')">Tema Oscuro</button>
-</div>
 
 <div class="splitchattable">
     <div class="chatcontainer">
@@ -89,7 +99,6 @@
         <input id="skip-button" type="button" value="SKIP"></input> <br/>
         <div id="voiceSelectContainer"></div>
     </div>
-    <div id="voiceSelectContainer"></div>
 </div>
 <audio id="soundPlayer" src="" type="audio/mp3"></audio>
 </body>
@@ -102,11 +111,12 @@
 <button id="exportButton" onclick="exportSettings()">ExportarCONFIG</button>
 <span id="loadingIndicator" style="display: none;">Loading...</span>
 
+<button id="toggleButton">Toggle List</button>
 <ul id="soundList"></ul>
 <div>
-    <label for="filter-words">Palabras para filtrar (separadas por espacio):</label>
+    <label for="filter-words">filtrar (palabras separadas):</label>
     <input type="text" id="filter-words">
-  </div>
+</div>
   <script>
     const filterWordsInput = document.getElementById('filter-words');
 

@@ -3,10 +3,6 @@ body {
     flex-direction: column;
     align-items: flex-start;
     justify-content: flex-start;
-    margin: 10;
-    padding: 10;
-    background-color: #000000;
-    color: #ffffff;
     font-family: Arial, Helvetica, sans-serif;
     font-weight: bold;
     font-size: 2em;
@@ -15,51 +11,36 @@ body {
 /* Estilo para los recuadros */
 
 input[type="text"] {
-    /* ocupar todo el ancho disponible */
-    padding: 12px 20px;
-    /* padding alrededor del texto */
-    margin: 8px 0;
-    /* margen arriba y abajo */
-    box-sizing: border-box;
-    /* el padding y el borde se incluyen en el ancho total */
-    border: 2px solid #ccc;
-    /* borde alrededor del campo de entrada */
-    border-radius: 4px;
-    /* bordes redondeados */
+    min-height: 50px;
+    max-width: 150px;
+    padding: 0 1rem;
+    font-size: 15px;
+    color:  #f1f1f1;
+    border: 1px solid #5e4dcd;
+    border-radius: 6px 6px 6px 6px;
+    background-color: #5e4dcd56;
 }
-
-.inputFields {
-    cursor: pointer;
-    /* cambiar el cursor a un puntero cuando se pasa por encima */
-    border-radius: 4px;
-}
-
-
 /* Estilo para los botones */
 
 input[type="button"] {
-    background-color: #4CAF50;
-    /* color de fondo */
-    border: none;
-    /* color del texto */
-    /* padding alrededor del texto */
-    text-align: center;
-    /* alinear el texto al centro */
-    text-decoration: none;
-    /* quitar el subrayado */
-    display: inline-block;
+    min-height: 50px;
+    padding: .5em 1em;
+    border: 1px solid #5e4dcd;
+    border-radius: 6px 6px 6px 6px;
+    background-color: #5e4dcd;
+    color: #fff;
+    font-size: 15px;
     cursor: pointer;
-    /* cambiar el cursor a un puntero cuando se pasa por encima */
-    border-radius: 4px;
-    padding: 15px 10px;
-    /* bordes redondeados */
+    transition: background-color .3s ease-in-out;
 }
 
 
 /* Estilo para los botones cuando se pasa el cursor por encima */
 
 input[type="button"]:hover {
-    background-color: #45a049;
+    background-color: #5e5dcd;
+    border: 2px solid lightgrey;
+    box-shadow: 0px 0px 20px -17px;
     /* cambiar el color de fondo */
 }
 
@@ -67,11 +48,11 @@ input[type="button"]:hover {
 /* Estilo para los botones cuando se presionan */
 
 input[type="button"]:active {
-    background-color: #3e8e41;
+    background-color: #1d1d1d;
     /* cambiar el color de fondo */
     box-shadow: 0 5px #666;
     /* añadir una sombra */
-    transform: translateY(4px);
+    transform: scale(0.95);
     /* mover el botón ligeramente hacia abajo */
 }
 
@@ -119,6 +100,8 @@ a {
 
 .containerheader {
     text-align: center;
+    max-width: 50%;
+
 }
 
 .chatcontainer,
@@ -135,14 +118,16 @@ a {
 
 .chatcontainer {
     min-width: 400px;
-    padding-right: 20px;
-    max-height: calc(100vh - 240px);
+    padding-right: 60px;
+    max-height: 800px;
+    max-width: 800px
 }
 
 .giftcontainer {
-    min-width: 50px;
-    max-height: calc(100vh - 240px);
-    padding-left: 10px;
+    min-width: 500px;
+    max-width: 800px;
+    padding-left: 60px;
+    max-height: 800px
 }
 
 @media (max-aspect-ratio: 1/1) {
@@ -241,10 +226,22 @@ body.theme-dark {
 }
 
 body.theme-light {
-    background-color: #f5f5f5;
-    color: #333333;
-}
-
+    /* fallback for old browsers */
+    background: #4568dc; /* fallback for old browsers */
+    background: -webkit-linear-gradient(to right, #4568dc, #b06ab3); /* Chrome 10-25, Safari 5.1-6 */
+    background: linear-gradient(to right, #4568dc, #b06ab3); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ *
+  
+    /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+  }
+  
+  .mask-custom {
+    background: rgba(24, 24, 16, 0.2);
+    border-radius: 2em;
+    backdrop-filter: blur(15px);
+    border: 2px solid rgba(255, 255, 255, 0.05);
+    background-clip: padding-box;
+    box-shadow: 10px 10px 10px rgba(46, 54, 68, 0.03);
+  }
 .themeButtons button {
     width: 100px;
     height: 25px;
@@ -260,11 +257,6 @@ body.theme-light {
     background-color: #1356a3;
 }
 
-body.overlay {
-    background-color: #00ff00;
-    color: #ffffff;
-}
-
 .overlay .splitchattable,
 .overlay .giftcontainer,
 .overlay .eventcontainer {
@@ -276,30 +268,93 @@ body.overlay {
     opacity: 1;
 }
 
-.overlay::-webkit-scrollbar {
-    width: 10px;
-    background-color: #00ff00;
+#soundList {
+    list-style: none;
+    padding: 0;
+    margin: 0;
 }
 
-.overlay::-webkit-scrollbar-thumb {
-    background-color: green;
-    color: #f5f5f5;
-}
 #soundList li {
-    list-style-type: japanese-informal; /* Esto eliminará el marcador de lista */
-    padding-right: 20px; /* Esto agregará una sangría de 20px a todo el bloque de texto */
-    margin: 30px;
+    display: flex;
+    padding: 5px;
+    border: 1px;
+    margin-bottom: 5px;
+}
 
+.renameButton {
+    background-color: #f44336;
+    color: #fff;
+    border: none;
+    padding: 5px 10px;
+    margin-left: 5px;
+    cursor: pointer;
+}
+
+.renameButton {
+    background-color: #2196f3;
+}
+
+.renameButton:focus {
+    outline: none;
 }
 
 .deleteButton {
-    color: white;
-    background-color: red;
-    width: 30px; /* Esto establecerá el ancho del botón en 50px */
-    height: 30px;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background-color: rgb(226, 118, 118);
+    border: none;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0px 0px 20px rgba(240, 117, 117, 0.164);
+    cursor: pointer;
+    transition-duration: .3s;
+    overflow: hidden;
+    position: relative;
 }
-#voiceSelectContainer {
-    color: rgb(36, 23, 23);
+
+.svgIcon {
+    width: 12px;
+    transition-duration: .3s;
+}
+
+.svgIcon path {
+    fill: white;
+}
+
+.deleteButton:hover {
+    width: 140px;
+    border-radius: 50px;
+    transition-duration: .3s;
+    background-color: rgb(255, 69, 69);
+    align-items: center;
+}
+
+.deleteButton:hover .svgIcon {
+    width: 50px;
+    transition-duration: .3s;
+    transform: translateY(60%);
+}
+
+.deleteButton::before {
+    position: absolute;
+    top: -10px;
+    content: "Delete";
+    color: white;
+    transition-duration: .3s;
+    font-size: 10px;
+}
+
+.deleteButton:hover::before {
+    font-size: 30px;
+    opacity: 1;
+    transform: translateY(20px);
+    transition-duration: .3s;
+}
+.hidden {
+    display: none;
 }
 audio {
     height: 65px;
@@ -307,6 +362,69 @@ audio {
     vertical-align: middle; /* Alineación vertical en el centro */
 }
 
+#voiceSelectContainer {
+    position: relative;
+}
+
+#voiceSelectContainer select {
+    min-height: 50px;
+    padding: .5em 1em;
+    border: 1px solid #5e4dcd;
+    border-radius: 6px 6px 6px 6px;
+    background-color: transparent;
+    color:  #f1f1f1;
+    font-size: 15px;
+    cursor: pointer;
+    transition: background-color .3s ease-in-out;
+}
+
+#voiceSelectContainer select:focus {
+    /* Cambia el color de fondo y el color del texto cuando el select está enfocado */
+    background-color: #5e4dcd;
+    color: #ffffff;
+}
+
+#voiceSelectContainer select option {
+    /* Cambia el color de fondo y el color del texto de las opciones */
+    background-color: transparent;
+    color: #000000;
+}
+
+#selectedOptionsContainer {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    background-color: #f6f6f6;
+    padding: 10px;
+    box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+    z-index: 1;
+}
+
+#showOptionsButton {
+    margin-top: 10px;
+    background-color: #2196f3;
+    color: #fff;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+}
+
+#showOptionsButton:hover {
+    background-color: #1356a3;
+}
+#voiceSelectContainer select option:checked {
+    /* Cambia el color de fondo y el color del texto de la opción seleccionada */
+    background-color: #5e4dcd;
+    color: #fff;
+}
+
+#voiceSelectContainer select::selection {
+    /* Cambia el color de fondo y el color del texto de la selección de texto */
+    background-color: #5e4dcd;
+    color: #fff;
+}
 audio::-webkit-media-controls-play-button {
     background-color: transparent;
 }
@@ -314,3 +432,205 @@ audio::-webkit-media-controls-panel {
     background-color: #ececec;
     color: rgb(36, 23, 23);
 }
+.toggleWrapper {
+    left: 0;
+    overflow: hidden;
+    padding: 0px 50px;
+    transform: translate3d(0, 0%, 0);
+    color: white;
+}
+  .toggleWrapper input {
+    position: absolute;
+    left: -99em;
+  }
+  
+  .toggle {
+    cursor: pointer;
+    display: inline-block;
+    position: relative;
+    width: 90px;
+    height: 50px;
+    background-color: #83d8ff;
+    border-radius: 84px;
+    transition: background-color 200ms cubic-bezier(0.445, 0.05, 0.55, 0.95);
+  }
+  
+  .toggle:before {
+    content: 'AM';
+    position: absolute;
+    left: -50px;
+    top: 15px;
+    font-size: 18px;
+  }
+  
+  .toggle:after {
+    content: 'PM';
+    position: absolute;
+    right: -48px;
+    top: 15px;
+    font-size: 18px;
+    color: #749ed7;
+  }
+  
+  .toggle__handler {
+    display: inline-block;
+    position: relative;
+    z-index: 1;
+    top: 3px;
+    left: 3px;
+    width: 44px;
+    height: 44px;
+    background-color: #ffcf96;
+    border-radius: 50px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, .3);
+    transition: all 400ms cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    transform: rotate(-45deg);
+  }
+  
+  .toggle__handler .crater {
+    position: absolute;
+    background-color: #e8cda5;
+    opacity: 0;
+    transition: opacity 200ms ease-in-out;
+    border-radius: 100%;
+  }
+  
+  .toggle__handler .crater--1 {
+    top: 18px;
+    left: 10px;
+    width: 4px;
+    height: 4px;
+  }
+  
+  .toggle__handler .crater--2 {
+    top: 28px;
+    left: 22px;
+    width: 6px;
+    height: 6px;
+  }
+  
+  .toggle__handler .crater--3 {
+    top: 10px;
+    left: 25px;
+    width: 8px;
+    height: 8px;
+  }
+  
+  .star {
+    position: absolute;
+    background-color: #fff;
+    transition: all 300ms cubic-bezier(0.445, 0.05, 0.55, 0.95);
+    border-radius: 50%;
+  }
+  
+  .star--1 {
+    top: 10px;
+    left: 35px;
+    z-index: 0;
+    width: 30px;
+    height: 3px;
+  }
+  
+  .star--2 {
+    top: 18px;
+    left: 28px;
+    z-index: 1;
+    width: 30px;
+    height: 3px;
+  }
+  
+  .star--3 {
+    top: 27px;
+    left: 40px;
+    z-index: 0;
+    width: 30px;
+    height: 3px;
+  }
+  
+  .star--4, .star--5, .star--6 {
+    opacity: 0;
+    transition: all 300ms 0 cubic-bezier(0.445, 0.05, 0.55, 0.95);
+  }
+  
+  .star--4 {
+    top: 16px;
+    left: 11px;
+    z-index: 0;
+    width: 2px;
+    height: 2px;
+    transform: translate3d(3px, 0, 0);
+  }
+  
+  .star--5 {
+    top: 32px;
+    left: 17px;
+    z-index: 0;
+    width: 3px;
+    height: 3px;
+    transform: translate3d(3px, 0, 0);
+  }
+  
+  .star--6 {
+    top: 36px;
+    left: 28px;
+    z-index: 0;
+    width: 2px;
+    height: 2px;
+    transform: translate3d(3px, 0, 0);
+  }
+  
+  input:checked + .toggle {
+    background-color: #749dd6;
+  }
+  
+  input:checked + .toggle:before {
+    color: #749ed7;
+  }
+  
+  input:checked + .toggle:after {
+    color: #fff;
+  }
+  
+  input:checked + .toggle .toggle__handler {
+    background-color: #ffe5b5;
+    transform: translate3d(40px, 0, 0) rotate(0);
+  }
+  
+  input:checked + .toggle .toggle__handler .crater {
+    opacity: 1;
+  }
+  
+  input:checked + .toggle .star--1 {
+    width: 2px;
+    height: 2px;
+  }
+  
+  input:checked + .toggle .star--2 {
+    width: 4px;
+    height: 4px;
+    transform: translate3d(-5px, 0, 0);
+  }
+  
+  input:checked + .toggle .star--3 {
+    width: 2px;
+    height: 2px;
+    transform: translate3d(-7px, 0, 0);
+  }
+  
+  input:checked + .toggle .star--4, input:checked + .toggle .star--5, input:checked + .toggle .star--6 {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+  
+  input:checked + .toggle .star--4 {
+    transition: all 300ms 200ms cubic-bezier(0.445, 0.05, 0.55, 0.95);
+  }
+  
+  input:checked + .toggle .star--5 {
+    transition: all 300ms 300ms cubic-bezier(0.445, 0.05, 0.55, 0.95);
+  }
+  
+  input:checked + .toggle .star--6 {
+    transition: all 300ms 400ms cubic-bezier(0.445, 0.05, 0.55, 0.95);
+  }
+   

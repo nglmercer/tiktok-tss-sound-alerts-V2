@@ -9,23 +9,38 @@
  */
 class TikTokIOConnection {
     constructor(backendUrl) {
-        this.socket = io(backendUrl);
+        this.socket = io(backendUrl, {
+            reconnectionDelay: 1000, // Tiempo inicial de espera antes de la primera reconexión
+            reconnectionDelayMax: 5000, // Tiempo máximo de espera entre reconexiones
+            randomizationFactor: 0.5 // Factor de aleatoriedad para variar los tiempos de espera
+        });
         this.uniqueId = null;
         this.options = null;
 
+        
         this.socket.on('connect', () => {
             console.info("Socket connected!");
-
+            
             // Reconnect to streamer if uniqueId already set
             if (this.uniqueId) {
                 this.setUniqueId();
             }
         })
+        this.socket.on('reconnect_attempt', () => {
+            console.info("Attempting to reconnect...");
+        });
 
-        this.socket.on('disconnect', () => {
-            console.warn("Socket disconnected!");
+        this.socket.on('reconnect', (attemptNumber) => {
+            console.info(`Reconnected on attempt ${attemptNumber}`);
+        });
+
+        this.socket.on('disconnect', (reason) => {
+            console.warn("Socket disconnected due to " + reason);
+            if (reason === 'io server disconnect') {
+                // El servidor cerró la conexión, puedes intentar reconectar manualmente
+                this.socket.connect();
+            }
         })
-
         this.socket.on('streamEnd', () => {
             console.warn("LIVE has ended!");
             this.uniqueId = null;

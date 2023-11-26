@@ -12,6 +12,7 @@
 
     <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
     <div class="inputFields">
         <input type="text" placeholder="@tuusuario" id="uniqueIdInput" value="@melserngl">
@@ -37,13 +38,13 @@
     <script>
         const uniqueIdInput = document.getElementById('uniqueIdInput');
         const connectButton = document.getElementById('connectButton');
-    
+
         // Load the last entered value from localStorage
         const lastValue = localStorage.getItem('lastValue');
         if (lastValue) {
             uniqueIdInput.value = lastValue;
         }
-    
+
         if (connectButton) {
             connectButton.addEventListener('click', () => {
                 const currentValue = uniqueIdInput.value;
@@ -101,23 +102,11 @@
     </div>
 </div>
 <audio id="soundPlayer" src="" type="audio/mp3"></audio>
-</body>
-<form id="soundForm">
-    <input type="file" id="soundFiles" multiple>
-    <button type="submit">Añadir sonido</button>
-</form>
-<input type="file" id="importButton">
-<button onclick="importSettings()">ImportarCONFIG</button>
-<button id="exportButton" onclick="exportSettings()">ExportarCONFIG</button>
-<span id="loadingIndicator" style="display: none;">Loading...</span>
-
-<button id="toggleButton">Toggle List</button>
-<ul id="soundList"></ul>
 <div>
     <label for="filter-words">filtrar (palabras separadas):</label>
     <input type="text" id="filter-words">
 </div>
-  <script>
+<script>
     const filterWordsInput = document.getElementById('filter-words');
 
     // Load the last entered value from localStorage
@@ -135,4 +124,100 @@
     });
 </script>
 </body>
+<form id="soundForm">
+    <input type="file" id="soundFiles" accept=".mp3,.wav,.ogg,.webm" multiple>
+    <button type="submit">Añadir sonido</button>
+</form>
+<input type="file" id="importButton">
+<button onclick="importSettings()">ImportarCONFIG</button>
+<button id="exportButton" onclick="exportSettings()">ExportarCONFIG</button>
+<span id="loadingIndicator" style="display: none;">Loading...</span>
+
+<div id="dropdownButton" onclick="toggleDropdownMenu()">
+    <div id="selectedSound">Sonidos</div>
+    <ul id="soundList" style="display: none;"></ul>
+    <!-- Oculta la lista de sonidos -->
+</div>
+<div id="modal" style="display: none;">
+    <div id="modalContent">
+        <h2>Reproductor de Audio</h2>
+        <audio id="audioPlayer" controls></audio>
+        <input type="text" id="soundNameInput" placeholder="Nombre del sonido">
+        <button id="playButton">Reproducir</button>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        let dropdownButton = document.getElementById('dropdownButton');
+        let dropdownMenu = document.createElement('div');
+        dropdownMenu.id = 'dropdownMenu';
+
+        let soundList = document.getElementById('soundList');
+        for (let i = 0; i < soundList.children.length; i++) {
+            let listItem = soundList.children[i];
+
+            let optionDiv = document.createElement('div');
+            optionDiv.dataset.giftName = listItem.textContent.replace('X', '').replace('Renombrar', '').trim(); // Almacenar el nombre del sonido en un atributo de datos
+
+            let soundName = document.createElement('span');
+            soundName.textContent = optionDiv.dataset.giftName;
+
+            let deleteButton = listItem.querySelector('.deleteButton').cloneNode(true);
+            deleteButton.addEventListener('click', handleDelete);
+
+            let renameButton = listItem.querySelector('.renameButton').cloneNode(true);
+            renameButton.addEventListener('click', handleRename);
+
+            let playButton = listItem.querySelector('.playButton').cloneNode(true); // Crear el botón de reproducción
+            playButton.addEventListener('click', function() { // Agregar un controlador de eventos al botón
+                playSound(optionDiv.dataset.giftName);
+            });
+
+            optionDiv.appendChild(soundName);
+            optionDiv.appendChild(deleteButton);
+            optionDiv.appendChild(renameButton);
+            optionDiv.appendChild(playButton); // Agregar el botón de reproducción al div de opción
+
+            dropdownMenu.appendChild(optionDiv);
+        }
+
+        dropdownButton.appendChild(dropdownMenu);
+        dropdownButton.addEventListener('click', function(event) {
+            event.stopPropagation();
+            dropdownMenu.style.display = 'block';
+        });
+
+        let isMenuVisible = false;
+
+        dropdownButton.addEventListener('click', function(event) {
+            event.stopPropagation();
+            dropdownMenu.style.display = 'block';
+            isMenuVisible = true;
+        });
+
+        dropdownButton.addEventListener('dblclick', function(event) {
+            event.stopPropagation();
+            dropdownMenu.style.display = 'none';
+            isMenuVisible = false;
+        });
+
+        document.addEventListener('click', function() {
+            if (!isMenuVisible) {
+                dropdownMenu.style.display = 'none';
+            }
+        });
+    });
+
+    function toggleDropdownMenu() {
+        var dropdownMenu = document.getElementById('dropdownMenu');
+        if (dropdownMenu.style.display === 'none') {
+            dropdownMenu.style.display = 'block';
+        } else {
+            dropdownMenu.style.display = 'none';
+        }
+    }
+</script>
+</body>
+
 </html>

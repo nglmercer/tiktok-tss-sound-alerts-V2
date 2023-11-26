@@ -6,20 +6,38 @@ body {
     font-family: Arial, Helvetica, sans-serif;
     font-weight: bold;
     font-size: 2em;
-    min-width: 300px;
+    min-width: 400px;
 }
+
+
 /* Estilo para los recuadros */
 
 input[type="text"] {
     min-height: 50px;
-    max-width: 150px;
     padding: 0 1rem;
     font-size: 15px;
-    color:  #f1f1f1;
+    color: #f1f1f1;
     border: 1px solid #5e4dcd;
     border-radius: 6px 6px 6px 6px;
     background-color: #5e4dcd56;
 }
+
+label[for="filter-words"] {
+    display: block;
+    font-size: 16px;
+    color: #333;
+    margin-bottom: 5px;
+}
+
+#filter-words {
+    display: block;
+    width: 90%;
+    padding: 10px;
+    font-size: 16px;
+    border-radius: 4px;
+}
+
+
 /* Estilo para los botones */
 
 input[type="button"] {
@@ -34,10 +52,51 @@ input[type="button"] {
     transition: background-color .3s ease-in-out;
 }
 
+#soundFiles {
+    border: 1px solid #5e4dcd;
+    border-radius: 6px 6px 6px 6px;
+    background-color: #5e4dcd;
+    color: #fff;
+    cursor: pointer;
+    transition: background-color .3s ease-in-out;
+}
+
+#importButton {
+    border: 1px solid #5e4dcd;
+    border-radius: 6px 6px 6px 6px;
+    background-color: #5e4dcd;
+    color: #fff;
+    cursor: pointer;
+    transition: background-color .3s ease-in-out;
+    user-select: none;
+    outline: none;
+}
+
+input[type="submit"] {
+    min-height: 50px;
+    padding: .5em 1em;
+    border: 1px solid #5e4dcd;
+    border-radius: 6px 6px 6px 6px;
+    background-color: #5e4dcd;
+    color: #fff;
+    font-size: 15px;
+    cursor: pointer;
+    transition: background-color .3s ease-in-out;
+    user-select: none;
+    outline: none;
+}
+
 
 /* Estilo para los botones cuando se pasa el cursor por encima */
 
 input[type="button"]:hover {
+    background-color: #5e5dcd;
+    border: 2px solid lightgrey;
+    box-shadow: 0px 0px 20px -17px;
+    /* cambiar el color de fondo */
+}
+
+input[type="submit"]:hover {
     background-color: #5e5dcd;
     border: 2px solid lightgrey;
     box-shadow: 0px 0px 20px -17px;
@@ -54,6 +113,45 @@ input[type="button"]:active {
     /* añadir una sombra */
     transform: scale(0.95);
     /* mover el botón ligeramente hacia abajo */
+}
+
+#importSettings {
+    min-height: 50px;
+    padding: .5em 1em;
+    border: 1px solid #5e4dcd;
+    border-radius: 6px 6px 6px 6px;
+    background-color: #5e4dcd;
+    color: #fff;
+    font-size: 15px;
+    cursor: pointer;
+    transition: background-color .3s ease-in-out;
+    /* cambiar el color de fondo */
+}
+
+#exportButton {
+    min-height: 50px;
+    padding: .5em 1em;
+    border: 1px solid #5e4dcd;
+    border-radius: 6px 6px 6px 6px;
+    background-color: #5e4dcd;
+    color: #fff;
+    font-size: 15px;
+    cursor: pointer;
+    transition: background-color .3s ease-in-out;
+    /* cambiar el color de fondo */
+}
+
+#toggleButton {
+    min-height: 50px;
+    padding: .5em 1em;
+    border: 1px solid #5e4dcd;
+    border-radius: 6px 6px 6px 6px;
+    background-color: #5e4dcd;
+    color: #fff;
+    font-size: 15px;
+    cursor: pointer;
+    transition: background-color .3s ease-in-out;
+    /* cambiar el color de fondo */
 }
 
 h1 {
@@ -89,19 +187,16 @@ a {
 
 .splitchattable,
 .splitstatetable {
-    width: 100%;
     display: flex;
-    flex-wrap: wrap;
 }
 
 .splitstatetable td {
-    width: 50%;
+    width: 60%;
 }
 
 .containerheader {
     text-align: center;
-    max-width: 50%;
-
+    max-width: 80%;
 }
 
 .chatcontainer,
@@ -118,7 +213,7 @@ a {
 
 .chatcontainer {
     min-width: 400px;
-    padding-right: 60px;
+    padding-right: 20px;
     max-height: 800px;
     max-width: 800px
 }
@@ -126,12 +221,18 @@ a {
 .giftcontainer {
     min-width: 500px;
     max-width: 800px;
-    padding-left: 60px;
+    padding-left: 20px;
     max-height: 800px
 }
 
 @media (max-aspect-ratio: 1/1) {
+    body {
+        user-select: none;
+        outline: none;
+    }
     .splitchattable {
+        user-select: none;
+        outline: none;
         flex-direction: column;
     }
     .chatcontainer,
@@ -143,14 +244,18 @@ a {
         text-align: left;
     }
     .chatcontainer {
-        padding-right: 20;
+        padding-right: 10;
     }
     .giftcontainer {
-        padding-left: 20;
+        padding-left: 10;
     }
 }
 
 @media (orientation: portrait) {
+    body {
+        user-select: none;
+        outline: none;
+    }
     .splitchattable {
         flex-direction: column;
     }
@@ -158,11 +263,12 @@ a {
         width: 250px;
         height: 65px;
         outline: none;
-        vertical-align: middle; /* Alineación vertical en el centro */
-    }    
+        vertical-align: middle;
+        /* Alineación vertical en el centro */
+    }
     .chatcontainer,
     .giftcontainer {
-        min-width: 50px;
+        min-width: 200px;
         max-width: 1000px;
         max-height: 400px;
     }
@@ -189,30 +295,42 @@ a {
     font-weight: bold;
 }
 
-.dropdown {
-    position: relative;
-    display: inline-block;
+#dropdownMenu div {
+    display: flex;
+    flex-direction: row-reverse;
+    /* Invierte el orden de los elementos */
+    padding-top: 10px;
+    border-bottom: 1px solid #ddd;
+    margin: 5px;
 }
 
-.dropdown-content {
-    display: none;
-    position: absolute;
-    background-color: #f6f6f6;
-    min-width: 230px;
-    overflow: auto;
-    box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
-    z-index: 1;
+#dropdownMenu div:last-child {
+    gap: 1;
+    padding-top: 10px;
 }
 
-.dropdown-content div {
-    color: black;
-    padding: 12px 16px;
-    text-decoration: none;
-    display: block;
+#dropdownMenu span {
+    flex: 1;
+    overflow: hidden;
+    white-space: nowrap;
+    padding-top: 10px;
+    text-overflow: ellipsis;
+    text-align: left;
+    /* Alinea el texto a la derecha */
 }
 
-.dropdown:hover .dropdown-content {
-    display: block;
+#dropdownMenu button {
+    border: none;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    transition-duration: .3s;
+    overflow: hidden;
+}
+
+#dropdownMenu button:hover {
+    transition-duration: .3s;
+    align-items: center;
 }
 
 .dark-theme body {
@@ -227,21 +345,25 @@ body.theme-dark {
 
 body.theme-light {
     /* fallback for old browsers */
-    background: #4568dc; /* fallback for old browsers */
-    background: -webkit-linear-gradient(to right, #4568dc, #b06ab3); /* Chrome 10-25, Safari 5.1-6 */
-    background: linear-gradient(to right, #4568dc, #b06ab3); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ *
+    background: #b06ab3;
+    /* fallback for old browsers */
+    background: -webkit-linear-gradient(to right, #b06ab3, #4568dc);
+    /* Chrome 10-25, Safari 5.1-6 */
+    background: linear-gradient(to right, #b06ab3, #4568dc);
+    /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ *
   
     /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
-  }
-  
-  .mask-custom {
+}
+
+.mask-custom {
     background: rgba(24, 24, 16, 0.2);
     border-radius: 2em;
     backdrop-filter: blur(15px);
     border: 2px solid rgba(255, 255, 255, 0.05);
     background-clip: padding-box;
     box-shadow: 10px 10px 10px rgba(46, 54, 68, 0.03);
-  }
+}
+
 .themeButtons button {
     width: 100px;
     height: 25px;
@@ -282,20 +404,78 @@ body.theme-light {
 }
 
 .renameButton {
-    background-color: #f44336;
-    color: #fff;
-    border: none;
-    padding: 5px 10px;
-    margin-left: 5px;
-    cursor: pointer;
+    gap: 1;
+    width: 40px;
+    height: 40px;
+    font-size: 15px;
+    color: #f1f1f1;
+    border: 1px solid #5e4dcd;
+    border-radius: 6px 6px 6px 6px;
+    background-color: #5e4dcd56;
 }
 
-.renameButton {
-    background-color: #2196f3;
+.renameButton:hover {
+    width: 100px;
+    height: 40px;
+    color: #f1f1f1;
+    border: 1px solid #1a01bd;
+    border-radius: 6px 6px 6px 6px;
+    background-color: #2713a556;
+}
+
+.playButton {
+    padding: 0;
+    width: 40px;
+    height: 40px;
+    color: #f1f1f1;
+    border: 1px solid #3c20f4;
+    border-radius: 50%;
+    background-color: rgba(34, 0, 255, 0.649);
+    position: relative;
+}
+
+.playButton:before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 0;
+    height: 0;
+    border-top: 10px solid transparent;
+    border-bottom: 10px solid transparent;
+    border-left: 15px solid #f1f1f1;
+}
+
+.playButton:hover {
+    background-color: #2200ff;
+    transition-duration: .3s;
+}
+
+.playButton:focus {
+    outline: none;
 }
 
 .renameButton:focus {
     outline: none;
+}
+
+button {
+    min-height: 50px;
+    padding: .5em 1em;
+    border: 1px solid #5e4dcd;
+    border-radius: 6px 6px 6px 6px;
+    background-color: #5e4dcd;
+    color: #fff;
+    font-size: 15px;
+    cursor: pointer;
+    transition: background-color .3s ease-in-out;
+}
+
+button:hover {
+    background-color: #5e5dcd;
+    border: 2px solid lightgrey;
+    box-shadow: 0px 0px 20px -17px;
 }
 
 .deleteButton {
@@ -328,7 +508,7 @@ body.theme-light {
     width: 140px;
     border-radius: 50px;
     transition-duration: .3s;
-    background-color: rgb(255, 69, 69);
+    background-color: rgb(255, 41, 41);
     align-items: center;
 }
 
@@ -353,13 +533,16 @@ body.theme-light {
     transform: translateY(20px);
     transition-duration: .3s;
 }
+
 .hidden {
     display: none;
 }
+
 audio {
     height: 65px;
     outline: none;
-    vertical-align: middle; /* Alineación vertical en el centro */
+    vertical-align: middle;
+    /* Alineación vertical en el centro */
 }
 
 #voiceSelectContainer {
@@ -372,7 +555,7 @@ audio {
     border: 1px solid #5e4dcd;
     border-radius: 6px 6px 6px 6px;
     background-color: transparent;
-    color:  #f1f1f1;
+    color: #f1f1f1;
     font-size: 15px;
     cursor: pointer;
     transition: background-color .3s ease-in-out;
@@ -414,6 +597,7 @@ audio {
 #showOptionsButton:hover {
     background-color: #1356a3;
 }
+
 #voiceSelectContainer select option:checked {
     /* Cambia el color de fondo y el color del texto de la opción seleccionada */
     background-color: #5e4dcd;
@@ -425,13 +609,16 @@ audio {
     background-color: #5e4dcd;
     color: #fff;
 }
+
 audio::-webkit-media-controls-play-button {
     background-color: transparent;
 }
+
 audio::-webkit-media-controls-panel {
     background-color: #ececec;
     color: rgb(36, 23, 23);
 }
+
 .toggleWrapper {
     left: 0;
     overflow: hidden;
@@ -439,12 +626,13 @@ audio::-webkit-media-controls-panel {
     transform: translate3d(0, 0%, 0);
     color: white;
 }
-  .toggleWrapper input {
+
+.toggleWrapper input {
     position: absolute;
     left: -99em;
-  }
-  
-  .toggle {
+}
+
+.toggle {
     cursor: pointer;
     display: inline-block;
     position: relative;
@@ -453,26 +641,26 @@ audio::-webkit-media-controls-panel {
     background-color: #83d8ff;
     border-radius: 84px;
     transition: background-color 200ms cubic-bezier(0.445, 0.05, 0.55, 0.95);
-  }
-  
-  .toggle:before {
+}
+
+.toggle:before {
     content: 'AM';
     position: absolute;
     left: -50px;
     top: 15px;
     font-size: 18px;
-  }
-  
-  .toggle:after {
+}
+
+.toggle:after {
     content: 'PM';
     position: absolute;
     right: -48px;
     top: 15px;
     font-size: 18px;
     color: #749ed7;
-  }
-  
-  .toggle__handler {
+}
+
+.toggle__handler {
     display: inline-block;
     position: relative;
     z-index: 1;
@@ -485,152 +673,181 @@ audio::-webkit-media-controls-panel {
     box-shadow: 0 2px 6px rgba(0, 0, 0, .3);
     transition: all 400ms cubic-bezier(0.68, -0.55, 0.265, 1.55);
     transform: rotate(-45deg);
-  }
-  
-  .toggle__handler .crater {
+}
+
+.toggle__handler .crater {
     position: absolute;
     background-color: #e8cda5;
     opacity: 0;
     transition: opacity 200ms ease-in-out;
     border-radius: 100%;
-  }
-  
-  .toggle__handler .crater--1 {
+}
+
+.toggle__handler .crater--1 {
     top: 18px;
     left: 10px;
     width: 4px;
     height: 4px;
-  }
-  
-  .toggle__handler .crater--2 {
+}
+
+.toggle__handler .crater--2 {
     top: 28px;
     left: 22px;
     width: 6px;
     height: 6px;
-  }
-  
-  .toggle__handler .crater--3 {
+}
+
+.toggle__handler .crater--3 {
     top: 10px;
     left: 25px;
     width: 8px;
     height: 8px;
-  }
-  
-  .star {
+}
+
+.star {
     position: absolute;
     background-color: #fff;
     transition: all 300ms cubic-bezier(0.445, 0.05, 0.55, 0.95);
     border-radius: 50%;
-  }
-  
-  .star--1 {
+}
+
+.star--1 {
     top: 10px;
     left: 35px;
     z-index: 0;
     width: 30px;
     height: 3px;
-  }
-  
-  .star--2 {
+}
+
+.star--2 {
     top: 18px;
     left: 28px;
     z-index: 1;
     width: 30px;
     height: 3px;
-  }
-  
-  .star--3 {
+}
+
+.star--3 {
     top: 27px;
     left: 40px;
     z-index: 0;
     width: 30px;
     height: 3px;
-  }
-  
-  .star--4, .star--5, .star--6 {
+}
+
+.star--4,
+.star--5,
+.star--6 {
     opacity: 0;
     transition: all 300ms 0 cubic-bezier(0.445, 0.05, 0.55, 0.95);
-  }
-  
-  .star--4 {
+}
+
+.star--4 {
     top: 16px;
     left: 11px;
     z-index: 0;
     width: 2px;
     height: 2px;
     transform: translate3d(3px, 0, 0);
-  }
-  
-  .star--5 {
+}
+
+.star--5 {
     top: 32px;
     left: 17px;
     z-index: 0;
     width: 3px;
     height: 3px;
     transform: translate3d(3px, 0, 0);
-  }
-  
-  .star--6 {
+}
+
+.star--6 {
     top: 36px;
     left: 28px;
     z-index: 0;
     width: 2px;
     height: 2px;
     transform: translate3d(3px, 0, 0);
-  }
-  
-  input:checked + .toggle {
+}
+
+input:checked+.toggle {
     background-color: #749dd6;
-  }
-  
-  input:checked + .toggle:before {
+}
+
+input:checked+.toggle:before {
     color: #749ed7;
-  }
-  
-  input:checked + .toggle:after {
+}
+
+input:checked+.toggle:after {
     color: #fff;
-  }
-  
-  input:checked + .toggle .toggle__handler {
+}
+
+input:checked+.toggle .toggle__handler {
     background-color: #ffe5b5;
     transform: translate3d(40px, 0, 0) rotate(0);
-  }
-  
-  input:checked + .toggle .toggle__handler .crater {
+}
+
+input:checked+.toggle .toggle__handler .crater {
     opacity: 1;
-  }
-  
-  input:checked + .toggle .star--1 {
+}
+
+input:checked+.toggle .star--1 {
     width: 2px;
     height: 2px;
-  }
-  
-  input:checked + .toggle .star--2 {
+}
+
+input:checked+.toggle .star--2 {
     width: 4px;
     height: 4px;
     transform: translate3d(-5px, 0, 0);
-  }
-  
-  input:checked + .toggle .star--3 {
+}
+
+input:checked+.toggle .star--3 {
     width: 2px;
     height: 2px;
     transform: translate3d(-7px, 0, 0);
-  }
-  
-  input:checked + .toggle .star--4, input:checked + .toggle .star--5, input:checked + .toggle .star--6 {
+}
+
+input:checked+.toggle .star--4,
+input:checked+.toggle .star--5,
+input:checked+.toggle .star--6 {
     opacity: 1;
     transform: translate3d(0, 0, 0);
-  }
-  
-  input:checked + .toggle .star--4 {
+}
+
+input:checked+.toggle .star--4 {
     transition: all 300ms 200ms cubic-bezier(0.445, 0.05, 0.55, 0.95);
-  }
-  
-  input:checked + .toggle .star--5 {
+}
+
+input:checked+.toggle .star--5 {
     transition: all 300ms 300ms cubic-bezier(0.445, 0.05, 0.55, 0.95);
-  }
-  
-  input:checked + .toggle .star--6 {
+}
+
+input:checked+.toggle .star--6 {
     transition: all 300ms 400ms cubic-bezier(0.445, 0.05, 0.55, 0.95);
-  }
-   
+}
+
+#dropdownButton {
+    width: 500px;
+    height: 30px;
+    border: 5px solid #000;
+    cursor: pointer;
+    position: relative;
+    background-color: #ffffff39;
+    text-align: center;
+    line-height: 30px;
+}
+
+#dropdownMenu {
+    position: absolute;
+    top: 100%;
+    width: 100%;
+    border: 1px solid #000;
+    background-color: #ffffff22;
+}
+
+#dropdownMenu div {
+    padding: 5px;
+    cursor: pointer;
+}
+
+#dropdownMenu div:hover {}

@@ -8,7 +8,70 @@ let viewerCount = 0;
 let likeCount = 0;
 let diamondsCount = 0;
 let previousLikeCount = 0;
+// Crear una base de datos IndexedDB
+let openRequest = indexedDB.open("audioDB", 1);
 
+openRequest.onupgradeneeded = function() {
+    let db = openRequest.result;
+    if (!db.objectStoreNames.contains('audios')) {
+        db.createObjectStore('audios');
+    }
+}
+
+openRequest.onerror = function() {
+    console.error("Error", openRequest.error);
+};
+
+openRequest.onsuccess = function() {
+    let db = openRequest.result;
+    db.onversionchange = function() {
+        db.close();
+        alert("La base de datos está obsoleta, por favor, recargue la página.");
+    };
+};
+
+// Guardar un audio en la base de datos
+function saveAudio(audioName, audioData) {
+    let db = openRequest.result;
+    let transaction = db.transaction("audios", "readwrite");
+    let audios = transaction.objectStore("audios");
+    let request = audios.put(audioData, audioName);
+
+    request.onsuccess = function() {
+        console.log("Audio guardado con éxito.");
+    };
+
+    request.onerror = function() {
+        console.log("Error al guardar el audio.", request.error);
+    };
+}
+
+// Obtener un audio de la base de datos
+function getAudio(audioName) {
+    let db = openRequest.result;
+    let transaction = db.transaction("audios", "readonly");
+    let audios = transaction.objectStore("audios");
+    let request = audios.get(audioName);
+
+    request.onsuccess = function() {
+        if (request.result) {
+            console.log("Audio encontrado.");
+            playAudio(request.result);
+        } else {
+            console.log("No se encontró el audio.");
+        }
+    };
+
+    request.onerror = function() {
+        console.log("Error al obtener el audio.", request.error);
+    };
+}
+
+// Reproducir un audio
+function playAudio(audioData) {
+    let audio = new Audio(audioData);
+    audio.play();
+}
 // These settings are defined by obs.html
 if (!window.settings) window.settings = {};
 document.addEventListener('DOMContentLoaded', (event) => {
@@ -46,35 +109,57 @@ $(document).ready(() => {
         connect();
     }
 });
+let isConnected = false;
+
+let currentRoomId = null;
+let isReconnecting = false;
 
 function connect() {
-    let uniqueId = window.settings.username || $('#uniqueIdInput').val();
+    let uniqueId = $('#uniqueIdInput').val();
+    isReconnecting = true;
     if (uniqueId !== '') {
         $('#stateText').text('Conectando...');
         $('#connectButton').prop('disabled', true);
 
-        connection.connect(uniqueId, {
-            enableExtendedGiftInfo: true
-        }).then(state => {
-            $('#stateText').text(`Conectado a la sala ${state.roomId}`);
+        // Si ya está conectado y el uniqueId es diferente, desconectar la conexión actual
+        if (isConnected && uniqueId !== currentUniqueId) {
+            connection.disconnect();
+            isConnected = false;
+        }
 
-            // Habilitar el botón después de establecer la conexión
-            $('#connectButton').prop('disabled', false);
+        // Si no está conectado, establecer una nueva conexión
+        if (!isConnected) {
+            connection.connect(uniqueId, {
+                enableExtendedGiftInfo: true
+            }).then(state => {
+                if (currentRoomId && currentRoomId === state.roomId) {
+                    alert('Ya estás conectado a esta sala');
+                    return;
+                }
+                currentRoomId = state.roomId;
+                $('#stateText').text(`Conectado a la sala ${state.roomId}`);
 
-        }).catch(errorMessage => {
-            $('#stateText').text(errorMessage);
+                // Habilitar el botón después de establecer la conexión
+                $('#connectButton').prop('disabled', false);
+                isConnected = true;
+                currentUniqueId = uniqueId; // Guardar el uniqueId actual
 
-            // programar próximo intento si se establece el nombre de usuario obs
-            if (window.settings.username) {
-                setTimeout(() => {
-                    connect(window.settings.username);
-                }, 30000);
-            }
+            }).catch(errorMessage => {
+                $('#stateText').text(errorMessage);
 
-            // Habilitar el botón en caso de error
-            $('#connectButton').prop('disabled', false);
-        });
+                // programar próximo intento si se establece el nombre de usuario obs
+                if (window.settings.username) {
+                    setTimeout(() => {
+                        connect(window.settings.username);
+                    }, 30000);
+                }
 
+                // Habilitar el botón en caso de error
+                $('#connectButton').prop('disabled', false);
+            });
+        } else {
+            alert('Ya estás conectado');
+        }
     } else {
         alert('No se ingresó nombre de usuario');
     }
@@ -137,7 +222,7 @@ function addChatItem(color, data, text, summarize) {
             return;
         }
     }
-    cacheMessage(text);
+    leerMensajes(text);
     playSoundByText(text);
 }
 
@@ -147,31 +232,33 @@ function addChatItem(color, data, text, summarize) {
  */
 function addGiftItem(data) {
     let container = location.href.includes('obs.html') ? $('.eventcontainer') : $('.giftcontainer');
-
     if (container.find('div').length > 200) {
         container.find('div').slice(0, 100).remove();
     }
 
     let streakId = data.userId.toString() + '_' + data.giftId;
 
+    const profilePictureUrl = isValidUrl(data.profilePictureUrl) ? data.profilePictureUrl : 'url_de_imagen_por_defecto';
+    const giftPictureUrl = isValidUrl(data.giftPictureUrl) ? data.giftPictureUrl : 'url_de_imagen_por_defecto';
+
     let html = `
       <div data-streakid=${isPendingStreak(data) ? streakId : ''}>
-          <img class="miniprofilepicture" src="${data.profilePictureUrl}">
+          <img class="miniprofilepicture" src="${profilePictureUrl}">
           <span>
               <b>${generateUsernameLink(data)}:</b> <span><span style="color: ${data.giftName ? 'purple' : 'black'}">${data.giftName}</span></span></span><br>
               <div>
                   <table>
                       <tr>
-                          <td><img class="gifticon" src="${data.giftPictureUrl}"></td>
+                          <td><img class="gifticon" src="${giftPictureUrl}"></td>
                           <td>
                               <span><b style="${isPendingStreak(data) ? 'color:red' : ''}">x${data.repeatCount.toLocaleString()} : ${(data.diamondCount * data.repeatCount).toLocaleString()} Diamantes </b><span><br>
                           </td>
                       </tr>
-                  </tabl>
+                  </table>
               </div>
           </span>
       </div>
-  `;
+    `;
 
     let existingStreakItem = container.find(`[data-streakid='${streakId}']`);
 
@@ -181,11 +268,10 @@ function addGiftItem(data) {
         container.append(html);
     }
 
-    container.stop();
-    container.animate({
-        scrollTop: container[0].scrollHeight
-    }, 800);
-    playSound(data.giftName);
+    if (data.repeatCount === 1) {
+        playSound(data.giftName);
+    }
+
     let giftContainer = document.getElementById('giftContainer');
     if (giftContainer) {
         let giftItem = document.createElement('div');
@@ -194,50 +280,57 @@ function addGiftItem(data) {
     }
 }
 
+function isValidUrl(string) {
+    try {
+        new URL(string);
+    } catch (_) {
+        return false;
+    }
+
+    return true;
+}
+
 document.addEventListener('DOMContentLoaded', function() {
-    let soundForm = document.getElementById('soundForm');
     let soundList = document.getElementById('soundList');
-
-    if (!soundList) {
-        console.error('No se encontró el elemento con id "soundList". Asegúrate de que exista en tu HTML.');
-        return;
-    }
-
-    if (soundForm) {
-        soundForm.addEventListener('submit', function(e) {
-            e.preventDefault();
-
-            let soundFiles = document.getElementById('soundFiles').files;
-
-            for (let i = 0; i < soundFiles.length; i++) {
-                let soundFile = soundFiles[i];
-
-                let reader = new FileReader();
-                reader.onloadend = function() {
-                    let audioSrc = reader.result;
-                    let giftName = soundFile.name.split('.').slice(0, -1).join('.'); // Use the file name as the gift name
-                    localStorage.setItem(giftName, audioSrc);
-
-                    addSoundToList(giftName, soundList);
-                }
-                reader.readAsDataURL(soundFile);
-            }
-
-            soundForm.reset(); // Clear the form after submitting
-        });
-    }
 
     // Load existing sounds
     for (let i = 0; i < localStorage.length; i++) {
         let giftName = localStorage.key(i);
         addSoundToList(giftName, soundList);
     }
-});
-document.addEventListener('DOMContentLoaded', function() {
-    document.getElementById('toggleButton').addEventListener('click', function() {
-        document.getElementById('soundList').classList.toggle('hidden');
+
+    soundList.addEventListener('click', function(event) {
+        if (event.target.matches('.deleteButton')) {
+            handleDelete(event);
+        } else if (event.target.matches('.renameButton')) {
+            handleRename(event);
+        }
+        event.stopPropagation(); // Stop event propagation
+    });
+
+    // Hide soundList when clicking outside of it
+    document.addEventListener('click', function() {
+        soundList.style.display = 'none';
     });
 });
+document.addEventListener('DOMContentLoaded', function() {
+    document.getElementById('soundForm').addEventListener('submit', function(event) {
+        event.preventDefault(); // Evita que el formulario se envíe y la página se recargue
+        let soundFiles = document.getElementById('soundFiles').files;
+        for (let i = 0; i < soundFiles.length; i++) {
+            let soundFile = soundFiles[i];
+            let reader = new FileReader();
+            reader.onload = function(e) {
+                let soundData = e.target.result;
+                let soundName = soundFile.name;
+                localStorage.setItem(soundName, soundData);
+                addSoundToList(soundName, document.getElementById('soundList'));
+            };
+            reader.readAsDataURL(soundFile);
+        }
+    });
+});
+
 function addSoundToList(giftName, soundList) {
     let listItem = document.createElement('li');
     listItem.textContent = giftName;
@@ -245,34 +338,50 @@ function addSoundToList(giftName, soundList) {
     let deleteButton = document.createElement('button');
     deleteButton.textContent = 'X';
     deleteButton.className = 'deleteButton';
-    deleteButton.addEventListener('click', function() {
-        if (confirm('¿Estás seguro de que quieres eliminar este sonido?')) {
-            localStorage.removeItem(giftName);
-            soundList.removeChild(listItem);
-        }
-    });
 
     let renameButton = document.createElement('button');
     renameButton.textContent = 'Renombrar';
-    renameButton.addEventListener('click', function() {
-        let newName = prompt('Introduce el nuevo nombre para el sonido:', giftName);
-        if (newName && newName !== giftName) {
-            let audioSrc = localStorage.getItem(giftName);
-            localStorage.removeItem(giftName);
-            localStorage.setItem(newName, audioSrc);
-            listItem.textContent = newName;
-        }
+    renameButton.className = 'renameButton';
+
+    let playButton = document.createElement('button'); // Crear el botón de reproducción
+    playButton.textContent = '';
+    playButton.className = 'playButton';
+    playButton.addEventListener('click', function() { // Agregar un controlador de eventos al botón
+        playSound(giftName);
     });
+
+    listItem.prepend(playButton); // Agregar el botón de reproducción al elemento de la lista
     listItem.prepend(renameButton);
-    listItem.prepend(deleteButton); // Esto moverá el botón a la izquierda
+    listItem.prepend(deleteButton);
     soundList.appendChild(listItem);
 }
 
+function handleDelete(event) {
+    let giftName = event.target.parentElement.dataset.giftName; // Obtener el nombre del sonido del atributo de datos
+    if (confirm('¿Estás seguro de que quieres eliminar este sonido?')) {
+        localStorage.removeItem(giftName);
+        event.target.parentElement.remove();
+    }
+}
+
+function handleRename(event) {
+    let listItem = event.target.parentElement;
+    let giftName = listItem.dataset.giftName; // Obtener el nombre del sonido del atributo de datos
+    let newName = prompt('Introduce el nuevo nombre para el sonido:', giftName);
+    if (newName && newName !== giftName) {
+        let audioSrc = localStorage.getItem(giftName);
+        localStorage.removeItem(giftName);
+        localStorage.setItem(newName, audioSrc);
+        listItem.dataset.giftName = newName; // Actualizar el nombre del sonido en el atributo de datos
+        listItem.firstChild.textContent = newName; // Actualizar el texto del elemento de la lista
+    }
+}
 
 function playSound(giftName) {
     // Convertir el nombre del regalo a minúsculas
     let lowerCaseGiftName = giftName.toLowerCase();
-
+    let audioSrc = localStorage.getItem(giftName);
+    let audio = new Audio(audioSrc);
     // Buscar en el almacenamiento local un sonido que contenga el nombre del regalo en su nombre
     for (let i = 0; i < localStorage.length; i++) {
         let key = localStorage.key(i);
@@ -291,6 +400,7 @@ function playSound(giftName) {
         }
     }
 }
+
 function playSoundByText(text) {
     // Convertir el texto a minúsculas
     let lowerCaseText = text.toLowerCase();
@@ -324,6 +434,7 @@ function playSoundByText(text) {
         }
     }
 }
+
 function exportSettings() {
     // Convertir las configuraciones y sonidos a una cadena JSON
     let settings = JSON.stringify(localStorage);
@@ -383,7 +494,6 @@ connection.on('like', (msg) => {
         if (likeCount % 500 === 0 && likeCount !== previousLikeCount) {
             previousLikeCount = likeCount;
             const likeMessage = `${likeCount} likes.`;
-            cacheMessage(likeMessage);
         }
     }
 })
@@ -409,17 +519,18 @@ let processedMessages = {};
 let lastComments = [];
 let messageRepetitions = {};
 let lastCommentTime = Date.now();
-// Nuevo comentario de chat recibido
 connection.on('chat', (msg) => {
     if (window.settings.showChats === "0") return;
 
     // Add the new comment to the list
     let now = Date.now();
     if (processedMessages[msg.comment] && now - processedMessages[msg.comment] < 30000) {
-        // Si el mensaje ya ha sido procesado hace menos de
-        return;
+        // Si el mensaje ya ha sido procesado hace menos de 30 segundos, no lo envíe
+        // a menos que no estemos en el proceso de reconexión
+        if (isReconnecting) {
+            return;
+        }
     }
-
     // Si el mensaje no ha sido procesado o fue procesado hace más de un minuto,
     // añadirlo a la estructura de datos con la hora actual
     processedMessages[msg.comment] = now;
@@ -436,7 +547,7 @@ connection.on('chat', (msg) => {
 
     // Calculate the message rate
     let currentTime = Date.now();
-    let messageRate = 1000 / (currentTime - lastCommentTime);
+    let messageRate = 10000 / (currentTime - lastCommentTime);
     lastCommentTime = currentTime;
 
     // Check the repetition count
@@ -446,26 +557,31 @@ connection.on('chat', (msg) => {
     messageRepetitions[msg.comment]++;
 
     // If the message rate is high and the message has been repeated many times, filter it
-    if (messageRate > 1 && messageRepetitions[msg.comment] > 5) {
+    if (messageRate > 1 && messageRepetitions[msg.comment] > 10) {
         return;
     }
 
     addChatItem('', msg, msg.comment);
+    // After processing a message, if we were reconnecting, we're not anymore
+    if (isReconnecting) {
+        isReconnecting = false;
+    }
 });
 
 // Nuevo regalo recibido
 connection.on('gift', (data) => {
-    if (!isPendingStreak(data) && data.diamondCount > 0) {
-        diamondsCount += (data.diamondCount * data.repeatCount);
-        updateRoomStats();
-    }
+        if (!isPendingStreak(data) && data.diamondCount > 0) {
+            diamondsCount += (data.diamondCount * data.repeatCount);
+            updateRoomStats();
+        }
 
-    if (window.settings.showGifts === "0") return;
+        if (window.settings.showGifts === "0") return;
 
-    addGiftItem(data);
-})
-
-// compartir, seguir
+        for (let i = 0; i < data.repeatCount; i++) {
+            addGiftItem(data);
+        }
+    })
+    // compartir, seguir
 connection.on('social', (data) => {
     if (window.settings.showFollows === "0") return;
 
@@ -746,7 +862,29 @@ voiceSelect.addEventListener('change', function() {
 let isReading = false;
 let cache = [];
 let lastText = "";
+let lastComment = '';
 
+
+function enviarMensaje(message) {
+    // Enviar el mensaje
+    fetch("http://localhost:8911/api/v2/chat/message", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ "Message": message, "Platform": "Twitch", "SendAsStreamer": true })
+        })
+        .then(function(response) {
+            if (response.ok) {}
+        })
+        .catch(function(error) {
+            console.error('Error al enviar el mensaje:', error);
+        });
+    leerMensajes(); // Llama a leerMensajes() después de agregar un mensaje a la cola
+
+    lastComment = message;
+    lastCommentTime = Date.now();
+}
 class Queue {
     constructor() {
         this.items = [];
@@ -768,59 +906,18 @@ class Queue {
     }
 }
 
-function cacheMessage(text) {
-    // El resto de la función sigue igual
-    if (text && text.length >= 3 && text.length <= 400 && text !== lastText) {
-        cache.push(text);
-        lastText = text;
-        leerMensajes(); // Llama a leerMensajes() después de agregar un mensaje a la cola
-    }
-    if (cache.length > 15) {
-        cache.shift();
-    }
-
-    // Resetear wordCounts
-    wordCounts = {};
-}
-let wordCounts = {};
-
-function filtros(text) {
-    // Dividir el texto en palabras
-    let words = text.split(' ');
-
-    for (let word of words) {
-        // Incrementar la cuenta de la palabra
-        if (word in wordCounts) {
-            wordCounts[word]++;
-        } else {
-            wordCounts[word] = 1;
-        }
-
-        // Si la palabra se ha visto más de 5 veces, no pasar el filtro
-        if (wordCounts[word] > 5) {
-            return false;
-        }
-    }
-
-    // El resto de la función sigue igual
-    if (cache.includes(text) || palabrasSpam.some(word => text.includes(word))) {
-        return false;
-    }
-    cache.push(text);
-    if (cache.length > 20) {
-        cache.shift();
-    }
-    return true;
-}
-
-function leerMensajes() {
-    if (cache.length > 0 && !isReading) {
-        const text = cache.shift();
-        fetchAudio(text);
+function leerMensajes(text) {
+    if (text && !isReading) {
+        fetchAudio(text).then(audioUrl => {
+            if (audioUrl) {
+                audioqueue.enqueue(audioUrl);
+                if (!isPlaying) kickstartPlayer();
+            }
+        });
     }
 }
 
-const readMessages = [];
+const readMessages = new Set();
 
 async function fetchAudio(txt, voice) {
     try {
@@ -833,26 +930,10 @@ async function fetchAudio(txt, voice) {
 
         const blob = await resp.blob();
         const blobUrl = URL.createObjectURL(blob);
-        if (audioqueue) {
-            audioqueue.enqueue(blobUrl);
-            if (!isPlaying) kickstartPlayer();
-        }
-        const index = cache.indexOf(txt);
-        if (index !== -1) {
-            cache.splice(index, 1);
-        }
 
-        // Elimina el mensaje de cache una vez que se ha reproducido
-        const interval = setInterval(() => {
-            if (audio.ended) {
-                clearInterval(interval);
-                URL.revokeObjectURL(blobUrl);
-            }
-        }, 200); // Verifica cada segundo si el audio ha terminado de reproducirse
-        
-
+        return blobUrl;
     } catch (error) {
-        console.error("Error:", error);
+        console.error("Error fetchaudio:", error);
     }
 }
 
@@ -863,9 +944,14 @@ function makeParameters(params) {
 }
 
 function skipAudio() {
-    if (audioqueue.isEmpty()) {
-        isPlaying = false;
-        audio.pause();
+    audio.pause();
+    audio.currentTime = 0;
+
+    // If the queue is not empty, dequeue the next audio and start playing it
+    if (!audioqueue.isEmpty()) {
+        audio.src = audioqueue.dequeue();
+        audio.load();
+        audio.play();
     } else {
         isPlaying = true;
         audio.src = audioqueue.dequeue();
@@ -875,20 +961,24 @@ function skipAudio() {
 }
 
 function kickstartPlayer() {
-    if (audioqueue.isEmpty()) return isPlaying = false;
-    if (!audio.paused) return console.error("started player while running");
+    // If the queue is empty, do nothing
+    if (audioqueue.isEmpty()) {
+        isPlaying = false;
+        return;
+    }
+
+    // Dequeue the first text from the queue and fetch its audio
     isPlaying = true;
-    audio.src = audioqueue.dequeue();
+    const audioUrl = audioqueue.dequeue();
+    audio.src = audioUrl;
     audio.load();
     audio.play().catch(() => {
-        // Si ocurre un error al cargar el audio, intenta reproducir el siguiente audio
+        // If there is an error while playing the audio, try to play the next audio in the queue
         kickstartPlayer();
     });
-    audioqueue.dequeue();
-    readMessages.shift();
 
-    // Cuando ocurra un error al cargar el audio, intenta reproducir el siguiente audio
-    audio.onerror = function() {
+    // When the audio ends, try to play the next audio in the queue
+    audio.onended = function() {
         kickstartPlayer();
     };
 }
@@ -910,8 +1000,6 @@ window.onload = async function() {
         } else {
             console.error("Error: audio is undefined");
         }
-
-        setInterval(leerMensajes, 1000); // Leer mensajes cada segundo
 
     } catch (error) {
         console.error("Error:", error);
